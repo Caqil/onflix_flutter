@@ -604,7 +604,7 @@ class CacheManager {
       int spaceFreed = 0;
 
       // Get all cache files sorted by last access time (LRU)
-      final files = <FileSystemEntity>[];
+      final files = <File>[];
       await for (final entity in directory.list()) {
         if (entity is File) {
           files.add(entity);
@@ -623,10 +623,11 @@ class CacheManager {
         if (spaceFreed >= requiredSpace) break;
 
         try {
-          final fileSize = await file.length();
+          final int fileSize = await file.length(); // Explicitly type as int
           await file.delete();
           spaceFreed += fileSize;
-          stats.totalSize -= fileSize;
+          stats.totalSize -=
+              fileSize; // Ensure stats.totalSize is int or cast if double
           stats.totalFiles -= 1;
 
           // Remove metadata
@@ -638,20 +639,19 @@ class CacheManager {
         }
       }
 
-      _logger.d('Evicted ${spaceFreed} bytes for cache type: $type');
+      _logger.d('Evicted $spaceFreed bytes for cache type: $type');
     } catch (e) {
       _logger.e('Failed to evict cache entries: $e');
     }
   }
 
-  // Evict oldest entries
   Future<void> _evictOldestEntries(CacheType type, int count) async {
     try {
       final directory = Directory(_getCacheDirectory(type));
       final stats = _cacheStats[type]!;
       int removed = 0;
 
-      final files = <FileSystemEntity>[];
+      final files = <File>[];
       await for (final entity in directory.list()) {
         if (entity is File) {
           files.add(entity);
@@ -669,9 +669,10 @@ class CacheManager {
         if (removed >= count) break;
 
         try {
-          final fileSize = await file.length();
+          final int fileSize = await file.length(); // Get file size in bytes
           await file.delete();
-          stats.totalSize -= fileSize;
+          stats.totalSize -=
+              fileSize; // Ensure stats.totalSize is int or cast if double
           stats.totalFiles -= 1;
           removed++;
 

@@ -3,6 +3,7 @@ class StorageKeys {
   static const String authToken = 'auth_token';
   static const String refreshToken = 'refresh_token';
   static const String userId = 'user_id';
+  static const String adminUser = 'admin_user';
   static const String userEmail = 'user_email';
   static const String isLoggedIn = 'is_logged_in';
   static const String lastLoginDate = 'last_login_date';

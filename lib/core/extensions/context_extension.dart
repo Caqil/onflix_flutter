@@ -13,9 +13,9 @@ extension ContextExtension on BuildContext {
   double get screenHeight => screenSize.height;
 
   // Responsive breakpoints
-  bool get isMobile => ResponsiveWrapper.of(this).isMobile;
-  bool get isTablet => ResponsiveWrapper.of(this).isTablet;
-  bool get isDesktop => ResponsiveWrapper.of(this).isDesktop;
+  bool get isMobile => ResponsiveBreakpoints.of(this).isMobile;
+  bool get isTablet => ResponsiveBreakpoints.of(this).isTablet;
+  bool get isDesktop => ResponsiveBreakpoints.of(this).isDesktop;
 
   // Safe area
   EdgeInsets get padding => MediaQuery.of(this).padding;

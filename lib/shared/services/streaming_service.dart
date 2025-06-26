@@ -38,7 +38,6 @@ class StreamingService {
   // CDN and server management
   final List<StreamingServer> _availableServers = [];
   StreamingServer? _currentServer;
-  final int _serverFailureCount = 0;
 
   // Buffering and preloading
   final Map<String, BufferStatus> _bufferStatus = {};
@@ -446,8 +445,7 @@ class StreamingService {
 
   // Get device ID
   Future<String> _getDeviceId() async {
-    return _storageService.getString(StorageKeys.deviceId) ??
-        Helpers.getDeviceId();
+    return _storageService.getString(StorageKeys.deviceId);
   }
 
   // Initialize DRM

@@ -7,6 +7,8 @@ class ApiEndpoints {
   static const String realtime = '$baseUrl/realtime';
   static const String health = '$baseUrl/health';
   static const String settings = '$baseUrl/settings';
+  static const String logs = '$baseUrl/logs';
+  static const String backups = '$baseUrl/backups';
 
   // Authentication endpoints
   static const String users = '$collections/users';
@@ -19,6 +21,16 @@ class ApiEndpoints {
   static const String confirmVerification = '$users/confirm-verification';
   static const String requestEmailChange = '$users/request-email-change';
   static const String confirmEmailChange = '$users/confirm-email-change';
+
+  // Admin/Super User endpoints (PocketBase built-in)
+  static const String superUsers = '$collections/_superusers';
+  static const String superUserAuthWithPassword =
+      '$superUsers/auth-with-password';
+  static const String superUserAuthRefresh = '$superUsers/auth-refresh';
+  static const String superUserRequestPasswordReset =
+      '$superUsers/request-password-reset';
+  static const String superUserConfirmPasswordReset =
+      '$superUsers/confirm-password-reset';
 
   // Content endpoints
   static const String content = '$collections/content';
@@ -50,36 +62,25 @@ class ApiEndpoints {
   static const String contentReports = '$collections/contentReports';
   static const String notifications = '$collections/notifications';
   static const String systemLogs = '$collections/system_logs';
-  static const String adminUsers = '$collections/admin_users';
+  static const String adminUsers =
+      '$collections/admin_users'; // Custom admin roles collection
   static const String contentModerationQueue =
       '$collections/content_moderation_queue';
 
-  // Social features
+  // Social endpoints
   static const String comments = '$collections/comments';
-  static const String reviews = '$collections/reviews';
   static const String likes = '$collections/likes';
   static const String shares = '$collections/shares';
-  static const String userFollows = '$collections/user_follows';
+  static const String follows = '$collections/follows';
+  static const String userActivity = '$collections/user_activity';
 
-  // Content management
-  static const String contentMetadata = '$collections/content_metadata';
-  static const String subtitles = '$collections/subtitles';
-  static const String thumbnails = '$collections/thumbnails';
-  static const String trailers = '$collections/trailers';
+  // System administration
+  static const String systemSettings = '$collections/system_settings';
+  static const String emailTemplates = '$collections/email_templates';
+  static const String auditLogs = '$collections/audit_logs';
+  static const String backupSchedules = '$collections/backup_schedules';
 
-  // Search and discovery
-  static const String searchHistory = '$collections/search_history';
-  static const String trending = '$collections/trending';
-  static const String featured = '$collections/featured';
-  static const String newReleases = '$collections/new_releases';
-  static const String comingSoon = '$collections/coming_soon';
-
-  // Device management
-  static const String userDevices = '$collections/user_devices';
-  static const String deviceSessions = '$collections/device_sessions';
-  static const String downloadQueue = '$collections/download_queue';
-
-  // File endpoints
+  // File handling
   static String getFileUrl(
       String collection, String recordId, String filename) {
     return '$files/$collection/$recordId/$filename';
@@ -87,41 +88,13 @@ class ApiEndpoints {
 
   static String getThumbnailUrl(
       String collection, String recordId, String filename,
-      {String? size}) {
+      {String? thumb}) {
     final baseUrl = getFileUrl(collection, recordId, filename);
-    return size != null ? '$baseUrl?thumb=$size' : baseUrl;
+    return thumb != null ? '$baseUrl?thumb=$thumb' : baseUrl;
   }
 
-  // Search endpoints
-  static String searchContent(String query) {
-    return '$content?filter=title~"$query"||description~"$query"';
-  }
-
-  static String getContentByCategory(String categoryId) {
-    return '$content?filter=categories~"$categoryId"';
-  }
-
-  static String getContentByGenre(String genre) {
-    return '$content?filter=genres~"$genre"';
-  }
-
-  // Pagination helpers
-  static String addPagination(String endpoint,
-      {int page = 1, int perPage = 20}) {
-    final separator = endpoint.contains('?') ? '&' : '?';
-    return '$endpoint${separator}page=$page&perPage=$perPage';
-  }
-
-  static String addSort(String endpoint, String sortBy,
-      {bool descending = false}) {
-    final separator = endpoint.contains('?') ? '&' : '?';
-    final sortDirection = descending ? '-' : '+';
-    return '$endpoint${separator}sort=$sortDirection$sortBy';
-  }
-
-  static String addExpand(String endpoint, List<String> relations) {
-    if (relations.isEmpty) return endpoint;
-    final separator = endpoint.contains('?') ? '&' : '?';
-    return '$endpoint${separator}expand=${relations.join(',')}';
+  // Real-time endpoints
+  static String getRealtimeUrl(String collection) {
+    return '$realtime/$collection';
   }
 }

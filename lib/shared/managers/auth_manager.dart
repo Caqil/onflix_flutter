@@ -507,7 +507,7 @@ class AuthManager {
       }
 
       // Authenticate with biometrics to confirm setup
-      final isAuthenticated = await _localAuth.authenticate(
+      final biometricAuthenticated = await _localAuth.authenticate(
         localizedReason: 'Confirm biometric authentication setup',
         options: const AuthenticationOptions(
           biometricOnly: true,
@@ -515,7 +515,7 @@ class AuthManager {
         ),
       );
 
-      if (!isAuthenticated) {
+      if (!biometricAuthenticated) {
         return AuthResult.failure('Biometric authentication setup cancelled');
       }
 

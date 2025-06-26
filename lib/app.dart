@@ -25,19 +25,15 @@ class OnflixApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
-      builder: (context, child) => ResponsiveWrapper.builder(
-        ClampingScrollWrapper.builder(context, child!),
-        maxWidth: 1920,
-        minWidth: 320,
-        defaultScale: true,
+      builder: (context, child) => ResponsiveBreakpoints.builder(
         breakpoints: [
-          const ResponsiveBreakpoint.resize(320, name: MOBILE),
-          const ResponsiveBreakpoint.autoScale(600, name: TABLET),
-          const ResponsiveBreakpoint.resize(1200, name: DESKTOP),
-          const ResponsiveBreakpoint.autoScale(1920, name: '4K'),
+          const Breakpoint(start: 0, end: 599, name: MOBILE),
+          const Breakpoint(start: 600, end: 1199, name: TABLET),
+          const Breakpoint(start: 1200, end: 1919, name: DESKTOP),
+          const Breakpoint(start: 1920, end: double.infinity, name: '4K'),
         ],
+        child: child!,
       ),
     );
   }
 }
-

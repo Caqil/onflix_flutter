@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:onflix/core/constants/app_constants.dart';
 import 'package:onflix/core/errors/exceptions.dart';
-import 'package:onflix/core/network/pocketbase_client.dart';
 import 'package:onflix/core/utils/helpers.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,7 +15,6 @@ class DownloadService {
   static DownloadService? _instance;
   late Logger _logger;
   late SharedPreferences _prefs;
-  late PocketBaseClient _pbClient;
   late Dio _dio;
 
   // Download management
@@ -45,7 +43,6 @@ class DownloadService {
         printEmojis: true,
       ),
     );
-    _pbClient = PocketBaseClient.instance;
     _dio = Dio();
   }
 

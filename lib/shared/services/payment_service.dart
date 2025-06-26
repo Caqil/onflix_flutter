@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/services.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:logger/logger.dart';
 import 'package:onflix/core/config/environment.dart';
@@ -322,7 +321,7 @@ class PaymentService {
       });
 
       if (response.isSuccess && response.data != null) {
-        return response.data!.data as Map<String, dynamic>;
+        return response.data!.data;
       }
 
       throw const SubscriptionException(
@@ -356,7 +355,7 @@ class PaymentService {
       return PaymentResult(
         status: _mapStripeStatus(result.status),
         paymentIntentId: result.paymentMethodId,
-        failureReason: result.paymentMethodId?.lastPaymentError?.message,
+        //failureReason: result.paymentMethodId?.lastPaymentError?.message,
       );
     } on StripeException catch (e) {
       _logger.e('Stripe payment error: ${e.error}');

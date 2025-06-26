@@ -51,7 +51,7 @@ dependencies:
   package_info_plus: ^4.2.0
 
   # Responsive Design
-  responsive_framework: ^1.1.1
+  responsive_framework: ^1.5.1
   flutter_screenutil: ^5.9.0
 
   # Animations & Loading
@@ -85,7 +85,7 @@ dev_dependencies:
   riverpod_generator: ^2.3.9
   build_runner: ^2.4.7
   hive_generator: ^2.0.1
-  json_annotation: ^4.8.1
+  json_annotation: ^4.9.0
   json_serializable: ^6.7.1
 
   # Linting & Analysis

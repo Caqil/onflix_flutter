@@ -181,15 +181,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                 name: 'admin-users',
                 pageBuilder: (context, state) => ShadPage(
                   child:
-                      const AdminDashboardPage(), // Replace with UserManagementPage
+                      const UserManagementPage(), // Replace with UserManagementPage
                 ),
               ),
               GoRoute(
                 path: 'analytics',
                 name: 'admin-analytics',
                 pageBuilder: (context, state) => ShadPage(
-                  child:
-                      const AdminDashboardPage(), // Replace with AnalyticsPage
+                  child: const AnalyticsPage(), // Replace with AnalyticsPage
                 ),
               ),
             ],
@@ -203,7 +202,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ShadImage.square(
-              LucideIcons.alertTriangle,
+              LucideIcons.triangleAlert,
               size: 64,
             ),
             const SizedBox(height: 16),

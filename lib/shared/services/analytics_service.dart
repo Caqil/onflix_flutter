@@ -6,7 +6,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../core/constants/storage_keys.dart';
-import '../../core/constants/app_constants.dart';
 import '../../core/network/pocketbase_client.dart';
 import '../../core/utils/helpers.dart';
 
@@ -77,7 +76,6 @@ class AnalyticsService {
   // Load device information
   Future<void> _loadDeviceInfo() async {
     try {
-      final deviceInfo = DeviceInfoPlugin();
       final packageInfo = await PackageInfo.fromPlatform();
 
       _deviceInfo = {
