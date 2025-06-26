@@ -128,7 +128,7 @@ class AuthInterceptor extends Interceptor {
       final authRecord = pb.authStore.model;
       final newToken = pb.authStore.token;
 
-      if (newToken != null && authRecord != null) {
+      if (authRecord != null) {
         await prefs.setString(StorageKeys.authToken, newToken);
         await prefs.setString(StorageKeys.userId, authRecord.id);
         return true;
@@ -301,7 +301,6 @@ class CacheInterceptor extends Interceptor {
   }
 
   void _cleanupExpiredEntries() {
-    final now = DateTime.now();
     _cache.removeWhere((key, entry) => entry.isExpired);
   }
 

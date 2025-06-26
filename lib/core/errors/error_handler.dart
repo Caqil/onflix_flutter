@@ -51,39 +51,40 @@ class ErrorHandler {
     }
 
     // Generic exception handling
-    return Failure(
+    return ServerFailure(
       message: 'An unexpected error occurred: ${exception.toString()}',
       code: 'UNKNOWN_ERROR',
+      statusCode: null,
     );
   }
 
   static Failure _handleAppException(AppException exception) {
     switch (exception.runtimeType) {
-      case NetworkException:
+      case NetworkException _:
         return NetworkFailure.fromException(exception as NetworkException);
-      case ServerException:
+      case ServerException _:
         return ServerFailure.fromException(exception as ServerException);
-      case AuthException:
+      case AuthException _:
         return AuthFailure.fromException(exception as AuthException);
-      case ValidationException:
+      case ValidationException _:
         return ValidationFailure.fromException(
             exception as ValidationException);
-      case ContentException:
+      case ContentException _:
         return ContentFailure.fromException(exception as ContentException);
-      case DownloadException:
+      case DownloadException _:
         return DownloadFailure.fromException(exception as DownloadException);
-      case PlaybackException:
+      case PlaybackException _:
         return PlaybackFailure.fromException(exception as PlaybackException);
-      case SubscriptionException:
+      case SubscriptionException _:
         return SubscriptionFailure.fromException(
             exception as SubscriptionException);
-      case CacheException:
+      case CacheException _:
         return CacheFailure.fromException(exception as CacheException);
       default:
-        return Failure(
+        return ServerFailure(
           message: exception.message,
           code: exception.code,
-          details: exception.details,
+          statusCode: null,
         );
     }
   }
@@ -120,8 +121,7 @@ class ErrorHandler {
         );
 
       case DioExceptionType.unknown:
-      default:
-        if (exception.error is SocketException) {
+      if (exception.error is SocketException) {
           return const NetworkFailure(
             message: 'No internet connection',
             code: 'NO_CONNECTION',

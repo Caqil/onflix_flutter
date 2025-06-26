@@ -34,8 +34,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         error: (_, __) => false,
       );
 
-      final isLoggingIn = state.location == RouteNames.login ||
-          state.location == RouteNames.register;
+      final isLoggingIn =
+          state.path == RouteNames.login || state.path == RouteNames.register;
 
       // Redirect to login if not authenticated
       if (!isLoggedIn && !isLoggingIn) {
@@ -202,7 +202,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const ShadImage.square(
+            ShadImage.square(
               LucideIcons.alertTriangle,
               size: 64,
             ),
@@ -213,7 +213,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             ),
             const SizedBox(height: 8),
             Text(
-              'The page "${state.location}" could not be found.',
+              'The page "${state.path}" could not be found.',
               style: ShadTheme.of(context).textTheme.muted,
             ),
             const SizedBox(height: 16),

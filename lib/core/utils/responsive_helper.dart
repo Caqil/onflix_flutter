@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:flutter/widgets.dart';
-import 'package:responsive_framework/responsive_framework.dart';
 import '../config/theme/responsive_breakpoints.dart';
 
 class ResponsiveHelper {

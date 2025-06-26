@@ -132,6 +132,15 @@ class AppConstants {
   static const String familyPlan = 'family';
   static const String studentPlan = 'student';
 
+  // ADD THIS: List of all subscription plans
+  static const List<String> subscriptionPlans = [
+    basicPlan,
+    standardPlan,
+    premiumPlan,
+    familyPlan,
+    studentPlan,
+  ];
+
   // Rating types
   static const String likeRating = 'like';
   static const String dislikeRating = 'dislike';

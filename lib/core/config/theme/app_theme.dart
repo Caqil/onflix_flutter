@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/widgets.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -63,13 +65,11 @@ class AppTheme {
         background: netflixBlack,
         foreground: Color(0xFFF8F9FA),
       ),
-      primaryColorScheme:
-          ShadColorScheme.fromName('red', brightness: Brightness.dark),
-      textTheme: const ShadTextTheme(
+      textTheme: ShadTextTheme(
         family: 'NetflixSans',
         package: null,
       ),
-      radius: 8.0,
+      radius: BorderRadius.circular(8.0),
     );
   }
 }
