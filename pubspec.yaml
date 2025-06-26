@@ -1,0 +1,125 @@
+name: onflix
+description: A Netflix-like streaming application built with Flutter and ShadCN UI
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+
+  # Routing
+  go_router: ^13.0.0
+
+  # Backend
+  pocketbase: ^0.18.1
+
+  # UI Framework - ShadCN UI
+  shadcn_ui: ^0.27.3
+  flutter_animate: ^4.5.0
+  lucide_icons_flutter: ^3.0.6
+
+  # Network & HTTP
+  dio: ^5.4.0
+  connectivity_plus: ^5.0.2
+
+  # Media & Video
+  video_player: ^2.8.1
+  chewie: ^1.7.4
+  cached_network_image: ^3.3.0
+
+  # Local Storage
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  shared_preferences: ^2.2.2
+
+  # Authentication & Security
+  crypto: ^3.0.3
+  local_auth: ^2.1.7
+
+  # Utilities
+  intl: ^0.20.0
+  path_provider: ^2.1.1
+  permission_handler: ^11.1.0
+  device_info_plus: ^9.1.1
+  package_info_plus: ^4.2.0
+
+  # Responsive Design
+  responsive_framework: ^1.1.1
+  flutter_screenutil: ^5.9.0
+
+  # Animations & Loading
+  lottie: ^2.7.0
+  shimmer: ^3.0.0
+
+  # Downloads & File Management
+  downloads_path_provider_28: ^0.1.2
+  flutter_downloader: ^1.11.5
+
+  # Analytics & Crash Reporting
+  firebase_analytics: ^10.7.4
+  firebase_crashlytics: ^3.4.8
+
+  # Push Notifications
+  firebase_messaging: ^14.7.9
+  flutter_local_notifications: ^16.3.0
+
+  # Payment
+  flutter_stripe: ^11.5.0
+
+  # Development
+  flutter_dotenv: ^5.1.0
+  logger: ^2.0.2+1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Code Generation
+  riverpod_generator: ^2.3.9
+  build_runner: ^2.4.7
+  hive_generator: ^2.0.1
+  json_annotation: ^4.8.1
+  json_serializable: ^6.7.1
+
+  # Linting & Analysis
+  flutter_lints: ^3.0.1
+  very_good_analysis: ^5.1.0
+
+  # Testing
+  mockito: ^5.4.4
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: false # We're using ShadCN UI instead
+
+  assets:
+    # - assets/images/
+    # - assets/images/logos/
+    # - assets/images/icons/
+    # - assets/images/placeholders/
+    # - assets/images/backgrounds/
+    # - assets/fonts/
+    # - assets/videos/
+    # - assets/animations/
+    # - .env.development
+    # - .env.production
+
+  fonts:
+    - family: NetflixSans
+      fonts:
+        - asset: assets/fonts/Netflix_Sans_Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Netflix_Sans_Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Netflix_Sans_Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Netflix_Sans_Light.ttf
+          weight: 300
