@@ -173,7 +173,7 @@ class SessionManager {
       String? deviceId =
           await _storageService.getSecureData<String>('device_id');
 
-      return deviceId;
+      return deviceId ?? 'dev_${DateTime.now().millisecondsSinceEpoch}';
     } catch (e) {
       _logger.w('Failed to get/create device ID: $e');
       return 'dev_${DateTime.now().millisecondsSinceEpoch}';
@@ -320,9 +320,9 @@ class SessionManager {
       // Setup session timer
       _setupSessionTimer(session);
 
-      // Persist sessions
+      // Persist sessions - FIXED: Renamed method call
       if (_persistSessions) {
-        await _persistSessions();
+        await _persistSessionsToStorage();
       }
 
       // Track analytics
@@ -384,9 +384,9 @@ class SessionManager {
         _handleInactiveSession(sessionId);
       });
 
-      // Persist updated session
+      // Persist updated session - FIXED: Renamed method call
       if (_persistSessions) {
-        await _persistSessions();
+        await _persistSessionsToStorage();
       }
 
       _emitSessionEvent(SessionEvent(
@@ -483,9 +483,9 @@ class SessionManager {
         timestamp: DateTime.now(),
       ));
 
-      // Persist updated sessions
+      // Persist updated sessions - FIXED: Renamed method call
       if (_persistSessions) {
-        await _persistSessions();
+        await _persistSessionsToStorage();
       }
 
       _logger.i('Session expired: $sessionId');
@@ -524,9 +524,9 @@ class SessionManager {
         timestamp: DateTime.now(),
       ));
 
-      // Persist updated sessions
+      // Persist updated sessions - FIXED: Renamed method call
       if (_persistSessions) {
-        await _persistSessions();
+        await _persistSessionsToStorage();
       }
 
       _logger.i('Session ended: $sessionId');
@@ -578,7 +578,7 @@ class SessionManager {
     try {
       final userSession = _activeSessions[sessionId];
       if (userSession == null) {
-        throw SessionException(
+        throw const SessionException(
           message: 'User session not found',
           code: 'USER_SESSION_NOT_FOUND',
         );
@@ -764,8 +764,9 @@ class SessionManager {
     return true;
   }
 
+  // FIXED: Renamed method to avoid naming conflict with boolean field
   // Persist sessions to storage
-  Future<void> _persistSessions() async {
+  Future<void> _persistSessionsToStorage() async {
     try {
       if (!_persistSessions) return;
 

@@ -292,6 +292,381 @@ class PocketBaseClient {
   // USER AUTHENTICATION
   // ======================
 
+// User registration method
+  Future<ApiResponse<RecordModel>> register({
+    required String email,
+    required String password,
+    required String passwordConfirm,
+    String? name,
+    String? username,
+  }) async {
+    try {
+      _logger.i('Attempting user registration for: $email');
+
+      // Clear admin mode if registering as user
+      _isAdminMode = false;
+
+      final data = {
+        'email': email,
+        'password': password,
+        'passwordConfirm': passwordConfirm,
+      };
+
+      if (name != null && name.isNotEmpty) {
+        data['name'] = name;
+      }
+      if (username != null && username.isNotEmpty) {
+        data['username'] = username;
+      }
+
+      final record = await _pb.collection('users').create(body: data);
+
+      _logger.i('User registration successful');
+      return ApiResponse.success(record,
+          message:
+              'Registration successful. Please check your email for verification.');
+    } catch (e) {
+      _logger.e('User registration failed: $e');
+
+      // Handle specific PocketBase validation errors
+      final errorMessage = e.toString();
+      if (errorMessage.contains('email')) {
+        if (errorMessage.contains('already exists')) {
+          throw AuthException(
+            message: 'This email address is already registered',
+            code: 'EMAIL_EXISTS',
+            details: e,
+          );
+        } else {
+          throw AuthException(
+            message: 'Please enter a valid email address',
+            code: 'INVALID_EMAIL',
+            details: e,
+          );
+        }
+      } else if (errorMessage.contains('password')) {
+        throw AuthException(
+          message: 'Password must be at least 8 characters long',
+          code: 'WEAK_PASSWORD',
+          details: e,
+        );
+      } else if (errorMessage.contains('username')) {
+        throw AuthException(
+          message: 'This username is already taken',
+          code: 'USERNAME_EXISTS',
+          details: e,
+        );
+      }
+
+      throw AuthException(
+        message: 'Registration failed. Please try again.',
+        code: 'REGISTRATION_FAILED',
+        details: e,
+      );
+    }
+  }
+
+// Authenticate with password method (wrapper for existing authenticate method)
+  Future<ApiResponse<RecordModel>> authenticateWithPassword(
+    String email,
+    String password, {
+    bool rememberMe = false,
+  }) async {
+    return await authenticate('users', email, password, rememberMe: rememberMe);
+  }
+
+// Confirm email verification
+  Future<void> confirmVerification(String token) async {
+    try {
+      _logger.i('Confirming email verification with token');
+      await _pb.collection('users').confirmVerification(token);
+      _logger.i('Email verification confirmed successfully');
+    } catch (e) {
+      _logger.e('Email verification confirmation failed: $e');
+
+      final errorMessage = e.toString();
+      if (errorMessage.contains('invalid') ||
+          errorMessage.contains('expired')) {
+        throw AuthException(
+          message: 'Verification link is invalid or has expired',
+          code: 'INVALID_VERIFICATION_TOKEN',
+          details: e,
+        );
+      } else if (errorMessage.contains('already verified')) {
+        throw AuthException(
+          message: 'Email is already verified',
+          code: 'ALREADY_VERIFIED',
+          details: e,
+        );
+      }
+
+      throw AuthException(
+        message: 'Failed to verify email. Please try again.',
+        code: 'VERIFICATION_FAILED',
+        details: e,
+      );
+    }
+  }
+
+// Request email verification
+  Future<void> requestVerification(String email) async {
+    try {
+      _logger.i('Requesting email verification for: $email');
+      await _pb.collection('users').requestVerification(email);
+      _logger.i('Email verification requested successfully');
+    } catch (e) {
+      _logger.e('Email verification request failed: $e');
+      throw AuthException(
+        message: 'Failed to send verification email: $e',
+        code: 'VERIFICATION_REQUEST_FAILED',
+        details: e,
+      );
+    }
+  }
+
+// Confirm password reset
+  Future<void> confirmPasswordReset(
+    String token,
+    String password,
+    String passwordConfirm,
+  ) async {
+    try {
+      _logger.i('Confirming password reset with token');
+      await _pb.collection('users').confirmPasswordReset(
+            token,
+            password,
+            passwordConfirm,
+          );
+      _logger.i('Password reset confirmed successfully');
+    } catch (e) {
+      _logger.e('Password reset confirmation failed: $e');
+
+      final errorMessage = e.toString();
+      if (errorMessage.contains('invalid') ||
+          errorMessage.contains('expired')) {
+        throw AuthException(
+          message: 'Password reset link is invalid or has expired',
+          code: 'INVALID_RESET_TOKEN',
+          details: e,
+        );
+      } else if (errorMessage.contains('password')) {
+        throw AuthException(
+          message: 'Passwords do not match or are too weak',
+          code: 'PASSWORD_MISMATCH',
+          details: e,
+        );
+      }
+
+      throw AuthException(
+        message: 'Failed to reset password. Please try again.',
+        code: 'PASSWORD_RESET_FAILED',
+        details: e,
+      );
+    }
+  }
+
+// ======================
+// ADDITIONAL UTILITY METHODS
+// ======================
+
+// Check if email exists (used for validation)
+  Future<bool> emailExists(String email) async {
+    try {
+      final result = await _pb.collection('users').getList(
+            filter: 'email = "$email"',
+            perPage: 1,
+          );
+      return result.items.isNotEmpty;
+    } catch (e) {
+      _logger.e('Email check failed: $e');
+      return false;
+    }
+  }
+
+// Check if username exists (used for validation)
+  Future<bool> usernameExists(String username) async {
+    try {
+      final result = await _pb.collection('users').getList(
+            filter: 'username = "$username"',
+            perPage: 1,
+          );
+      return result.items.isNotEmpty;
+    } catch (e) {
+      _logger.e('Username check failed: $e');
+      return false;
+    }
+  }
+
+// Update user profile
+  Future<ApiResponse<RecordModel>> updateProfile(
+    Map<String, dynamic> data, {
+    List<http.MultipartFile>? files,
+  }) async {
+    try {
+      if (!isAuthenticated || currentUser == null) {
+        throw const AuthException(
+          message: 'User not authenticated',
+          code: 'NOT_AUTHENTICATED',
+        );
+      }
+
+      _logger.i('Updating user profile');
+
+      final record = await _pb.collection('users').update(
+            currentUser!.id,
+            body: data,
+            files: files ?? [],
+          );
+
+      // Update auth store with new user data
+      _pb.authStore.save(_pb.authStore.token, record);
+      await _saveAuthState();
+
+      _logger.i('User profile updated successfully');
+      return ApiResponse.success(record,
+          message: 'Profile updated successfully');
+    } catch (e) {
+      _logger.e('Profile update failed: $e');
+      throw AuthException(
+        message: 'Failed to update profile: $e',
+        code: 'PROFILE_UPDATE_FAILED',
+        details: e,
+      );
+    }
+  }
+
+// Change password for authenticated user
+  Future<void> changePassword(
+    String oldPassword,
+    String newPassword,
+    String newPasswordConfirm,
+  ) async {
+    try {
+      if (!isAuthenticated || currentUser == null) {
+        throw const AuthException(
+          message: 'User not authenticated',
+          code: 'NOT_AUTHENTICATED',
+        );
+      }
+
+      _logger.i('Changing user password');
+
+      await _pb.collection('users').update(
+        currentUser!.id,
+        body: {
+          'oldPassword': oldPassword,
+          'password': newPassword,
+          'passwordConfirm': newPasswordConfirm,
+        },
+      );
+
+      _logger.i('Password changed successfully');
+    } catch (e) {
+      _logger.e('Password change failed: $e');
+
+      final errorMessage = e.toString();
+      if (errorMessage.contains('oldPassword')) {
+        throw AuthException(
+          message: 'Current password is incorrect',
+          code: 'INVALID_OLD_PASSWORD',
+          details: e,
+        );
+      } else if (errorMessage.contains('password')) {
+        throw AuthException(
+          message: 'New passwords do not match or are too weak',
+          code: 'INVALID_NEW_PASSWORD',
+          details: e,
+        );
+      }
+
+      throw AuthException(
+        message: 'Failed to change password: $e',
+        code: 'PASSWORD_CHANGE_FAILED',
+        details: e,
+      );
+    }
+  }
+
+// // ======================
+// // OAUTH2 AUTHENTICATION (Optional)
+// // ======================
+
+// // Authenticate with OAuth2
+//   Future<ApiResponse<RecordModel>> authenticateWithOAuth2({
+//     required String provider,
+//     required String code,
+//     required String codeVerifier,
+//     String? redirectUrl,
+//   }) async {
+//     try {
+//       _logger.i('Attempting OAuth2 authentication with: $provider');
+
+//       // Clear admin mode if authenticating as user
+//       _isAdminMode = false;
+
+//       final authData = await _pb.collection('users').authWithOAuth2(
+//             provider,
+//             code,
+//             codeVerifier,
+//             redirectUrl ?? '',
+//           );
+
+//       await _saveAuthState();
+
+//       _logger.i('OAuth2 authentication successful');
+//       return ApiResponse.success(authData.record!,
+//           message: 'OAuth2 login successful');
+//     } catch (e) {
+//       _logger.e('OAuth2 authentication failed: $e');
+//       _handleAuthException(e);
+//     }
+//   }
+
+// ======================
+// VALIDATION HELPERS
+// ======================
+
+// Validate email format
+  bool isValidEmail(String email) {
+    final emailRegex =
+        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    return emailRegex.hasMatch(email);
+  }
+
+// Validate password strength
+  bool isValidPassword(String password) {
+    // At least 8 characters
+    if (password.length < 8) return false;
+
+    // Contains at least one uppercase letter
+    if (!password.contains(RegExp(r'[A-Z]'))) return false;
+
+    // Contains at least one lowercase letter
+    if (!password.contains(RegExp(r'[a-z]'))) return false;
+
+    // Contains at least one number
+    if (!password.contains(RegExp(r'[0-9]'))) return false;
+
+    return true;
+  }
+
+// Get password strength score (0-4)
+  int getPasswordStrength(String password) {
+    int score = 0;
+
+    // Length
+    if (password.length >= 8) score++;
+    if (password.length >= 12) score++;
+
+    // Character types
+    if (password.contains(RegExp(r'[A-Z]'))) score++;
+    if (password.contains(RegExp(r'[a-z]'))) score++;
+    if (password.contains(RegExp(r'[0-9]'))) score++;
+    if (password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) score++;
+
+    return score.clamp(0, 4);
+  }
+
   // Regular user authentication
   Future<ApiResponse<RecordModel>> authenticate(
     String collection,

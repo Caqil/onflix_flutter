@@ -286,7 +286,6 @@ class AuthManager {
       final response = await _pbClient.authenticateWithPassword(
         email,
         password,
-        rememberMe: rememberMe,
       );
 
       if (response.isSuccess && response.data != null) {
