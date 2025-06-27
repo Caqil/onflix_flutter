@@ -193,7 +193,7 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
       final response = await _client.refreshAdminAuth();
 
       if (!response.success || response.data == null) {
-        throw AuthException(
+        throw const AuthException(
           message: 'Token refresh failed',
           code: 'TOKEN_REFRESH_FAILED',
         );
@@ -380,7 +380,7 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
       if (!response.success ||
           response.data == null ||
           response.data!.items.isEmpty) {
-        throw ServerException(
+        throw const ServerException(
           message: 'Analytics data not found',
           code: 'ANALYTICS_NOT_FOUND',
         );
@@ -728,10 +728,12 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
       var filter = <String>[];
 
       if (status != null) filter.add('status="$status"');
-      if (startDate != null)
+      if (startDate != null) {
         filter.add('created>="${startDate.toIso8601String()}"');
-      if (endDate != null)
+      }
+      if (endDate != null) {
         filter.add('created<="${endDate.toIso8601String()}"');
+      }
 
       final response = await _client.getRecords(
         ApiEndpoints.paymentHistory,

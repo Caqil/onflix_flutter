@@ -78,6 +78,7 @@ dependencies:
   logger: ^2.0.2+1
   data_table_2: ^2.6.0
   fl_chart: ^1.0.0
+  dartz: ^0.10.1
 
 dev_dependencies:
   flutter_test:
