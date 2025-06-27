@@ -136,7 +136,6 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
   late Animation<double> _rotationAnimation;
   late Animation<double> _rippleAnimation;
 
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -270,7 +269,6 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
 
   void _handleTapDown(TapDownDetails details) {
     setState(() {
-      _isPressed = true;
     });
     _scaleController.forward();
 
@@ -283,14 +281,12 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
 
   void _handleTapUp(TapUpDetails details) {
     setState(() {
-      _isPressed = false;
     });
     _scaleController.reverse();
   }
 
   void _handleTapCancel() {
     setState(() {
-      _isPressed = false;
     });
     _scaleController.reverse();
   }

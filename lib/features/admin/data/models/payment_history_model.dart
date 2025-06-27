@@ -72,7 +72,7 @@ class PaymentHistoryModel extends BaseModel {
 
   factory PaymentHistoryModel.fromRecord(dynamic record) {
     final data = record.data;
-    
+
     return PaymentHistoryModel(
       id: record.id,
       collectionId: record.collectionId,
@@ -94,10 +94,10 @@ class PaymentHistoryModel extends BaseModel {
       subscriptionPlan: data['subscription_plan'],
       description: data['description'],
       metadata: data['metadata'],
-      processedAt: data['processed_at'] != null 
+      processedAt: data['processed_at'] != null
           ? DateTime.parse(data['processed_at'])
           : null,
-      refundedAt: data['refunded_at'] != null 
+      refundedAt: data['refunded_at'] != null
           ? DateTime.parse(data['refunded_at'])
           : null,
       refundAmount: data['refund_amount']?.toDouble(),
@@ -136,8 +136,9 @@ class PaymentHistoryModel extends BaseModel {
   // Utility methods
   String get statusDisplayName => PaymentStatus.getDisplayName(status);
   String get typeDisplayName => PaymentType.getDisplayName(type);
-  String get paymentMethodDisplayName => PaymentMethod.getDisplayName(paymentMethod);
-  
+  String get paymentMethodDisplayName =>
+      PaymentMethod.getDisplayName(paymentMethod);
+
   String get formattedAmount {
     final currencySymbol = CurrencySymbols.getSymbol(currency);
     return '$currencySymbol${amount.toStringAsFixed(2)}';
@@ -150,9 +151,9 @@ class PaymentHistoryModel extends BaseModel {
   }
 
   bool get canBeRefunded {
-    return isSucceeded && 
-           refundedAt == null && 
-           DateTime.now().difference(processedAt ?? created).inDays <= 30;
+    return isSucceeded &&
+        refundedAt == null &&
+        DateTime.now().difference(processedAt ?? created).inDays <= 30;
   }
 
   bool get isRecent {
@@ -287,7 +288,7 @@ class Address {
       postalCode,
       country,
     ].where((part) => part != null && part.isNotEmpty);
-    
+
     return parts.join(', ');
   }
 }
